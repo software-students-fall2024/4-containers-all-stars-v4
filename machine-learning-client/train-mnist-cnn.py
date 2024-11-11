@@ -30,10 +30,8 @@ class CNNModel(nn.Module):
 
 model = CNNModel()
 
-# ensure that images have black digits with white background
-
-
 class InvertGrayscale:
+    """ ensure that images have black digits with white background """
     def __call__(self, tensor):
         return 255.0 - tensor
 
