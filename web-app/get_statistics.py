@@ -1,9 +1,7 @@
 """ Module for retrieving application statistics from mongodb """
 import logging
 from db_connect import connect_to_db
-db = connect_to_db()
-collection = db['num_classifications']
-logging.basicConfig(level=logging.INFO)
+collection = connect_to_db()
 logger = logging.getLogger(__name__)
 
 

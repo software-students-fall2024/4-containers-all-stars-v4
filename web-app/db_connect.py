@@ -1,8 +1,11 @@
 """ Module for connecting to mongodb """
 # import certifi
 import os
+import logging
 import pymongo
 from dotenv import load_dotenv
+
+logging.basicConfig(level=logging.INFO)
 
 
 def connect_to_db():
@@ -13,4 +16,4 @@ def connect_to_db():
     client = pymongo.MongoClient(mongo_cxn)
 
     db = client['project4']
-    return db
+    return db['num_classifications']
