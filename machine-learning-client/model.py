@@ -8,7 +8,7 @@ class CNNModel(nn.Module):
     """Class defines CNN model"""
 
     def __init__(self):
-        super(CNNModel, self).__init__()
+        super().__init__()
         # 1 input channel (grayscale), 32 output channels
         self.conv1 = nn.Conv2d(1, 32, kernel_size=3, padding=1)
         self.conv2 = nn.Conv2d(32, 64, kernel_size=3, padding=1)
@@ -19,6 +19,7 @@ class CNNModel(nn.Module):
         self.dropout = nn.Dropout(0.25)
 
     def forward(self, x):
+        """ Pass input through the model and return output """
         x = self.pool(F.relu(self.conv1(x)))
         x = self.pool(F.relu(self.conv2(x)))
         x = self.pool(F.relu(self.conv3(x)))
@@ -29,6 +30,7 @@ class CNNModel(nn.Module):
         return x
 
 
+# pylint: disable=too-few-public-methods
 class InvertGrayscale:
     """Class used to transform data and invert grayscale"""
 
