@@ -3,7 +3,7 @@
 import os
 import torch
 from torchvision import transforms
-from model import *
+from model import CNNModel, InvertGrayscale
 
 # import the pre-trained model
 current_dir = os.path.dirname(os.path.abspath(__file__))
