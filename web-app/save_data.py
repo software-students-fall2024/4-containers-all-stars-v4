@@ -1,21 +1,6 @@
 """ Module for saving classification outputs and user inputs to mongodb """
-
-import logging
-import os
-import pymongo
-import certifi
-from dotenv import load_dotenv
-
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-
-load_dotenv()
-mongo_cxn = os.getenv('MONGO_CXN_STRING')
-# client = pymongo.MongoClient(mongo_cxn, tlsCAFile=certifi.where())
-client = pymongo.MongoClient(mongo_cxn)
-
-
-db = client['project4']
+from db_connect import connect_to_db
+db = connect_to_db()
 collection = db['num_classifications']
 
 

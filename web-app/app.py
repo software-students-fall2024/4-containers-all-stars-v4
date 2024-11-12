@@ -1,12 +1,12 @@
 """ Flask server for web application - Project 4 """
 
-import logging
 import os
+import logging
+import requests
 from flask import Flask, render_template, request
+from dotenv import load_dotenv
 from save_data import save_to_mongo
 from get_statistics import get_statistics
-import requests
-from dotenv import load_dotenv
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -35,15 +35,19 @@ def classify():
 
     data = request.json
 
-    response = requests.post(
-        ml_base_url + '/predict',
-        json=data
-    )
+    try:
+        response = requests.post(
+            ml_base_url + '/predict', json=data, timeout=30)
+        response.raise_for_status()
+    except requests.exceptions.Timeout:
+        print("Request timed out")
+    except requests.exceptions.RequestException as e:
+        print(f"An error occurred: {e}")
 
     if response.status_code == 200:
         return response.json()
-    else:
-        return {"error": "Classification failed"}, 500
+
+    return {"error": "Classification failed"}, 500
 
 
 @app.route('/save-results', methods=['POST'])
