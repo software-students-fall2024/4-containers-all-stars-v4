@@ -1,6 +1,7 @@
 """ Module for training MNIST CNN model"""
 
 import torch
+from torch import nn
 from torch import optim
 from torchvision import datasets, transforms
 from model import CNNModel, InvertGrayscale
@@ -62,10 +63,13 @@ def main():
     """Main method to train and save model"""
     model = CNNModel()
 
-    transform = transforms.Compose([transforms.ToTensor(), InvertGrayscale()])
+    # transform = transforms.Compose([transforms.ToTensor(), InvertGrayscale()])
 
     dataset = datasets.MNIST(
-        root="./data", train=True, download=True, transform=transform
+        root="./data",
+        train=True,
+        download=True,
+        transform=transforms.Compose([transforms.ToTensor(), InvertGrayscale()]),
     )
     loader = torch.utils.data.DataLoader(
         dataset, batch_size=64, shuffle=False, num_workers=0
@@ -86,13 +90,13 @@ def main():
     mean /= total_images
     std /= total_images
 
-    charCount = 100
+    char_count = 100
 
-    print("\n" + "=" * charCount + "\n")
+    print("\n" + "=" * char_count + "\n")
     print("DEBUG: Dataset Characteristics")
     print(f" * mean: {float(mean):.4f}")
     print(f" * std: {float(std):.4f}")
-    print("\n" + "=" * charCount + "\n")
+    print("\n" + "=" * char_count + "\n")
 
     train_transform = transforms.Compose(
         [
@@ -115,18 +119,26 @@ def main():
         ]
     )
 
-    train_dataset = datasets.MNIST(
-        root="./data", train=True, download=True, transform=train_transform
-    )
-    test_dataset = datasets.MNIST(
-        root="./data", train=False, download=True, transform=test_transform
-    )
+    # train_dataset = datasets.MNIST(
+    #     root="./data", train=True, download=True, transform=train_transform
+    # )
+    # test_dataset = datasets.MNIST(
+    #     root="./data", train=False, download=True, transform=test_transform
+    # )
 
     train_loader = torch.utils.data.DataLoader(
-        train_dataset, batch_size=64, shuffle=True
+        datasets.MNIST(
+            root="./data", train=True, download=True, transform=train_transform
+        ),
+        batch_size=64,
+        shuffle=True,
     )
     test_loader = torch.utils.data.DataLoader(
-        test_dataset, batch_size=1000, shuffle=False
+        datasets.MNIST(
+            root="./data", train=False, download=True, transform=test_transform
+        ),
+        batch_size=1000,
+        shuffle=False,
     )
 
     # device specifications
@@ -134,12 +146,12 @@ def main():
 
     # hyperparameters
     epochs = 10
-    learning_rate = 0.001
+    # learning_rate = 0.001
 
     # init model, criterion, and optimizer
     model.to(device)
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.Adam(model.parameters(), lr=learning_rate)
+    # optimizer = optim.Adam(model.parameters(), lr=learning_rate)
 
     print("DEBUG: \x1B[4mModel Training and Evaluation\x1B[0m" + "\n")
     # train test loop
@@ -147,14 +159,20 @@ def main():
         print(f"Epoch {epoch}/{epochs}")
         # train_loss = train(model, train_loader, optimizer, criterion, device)
         # test_loss, accuracy = test(model, test_loader, criterion, device)
-        train(model, train_loader, optimizer, criterion, device)
+        train(
+            model,
+            train_loader,
+            optim.Adam(model.parameters(), lr=0.001),
+            criterion,
+            device,
+        )
         test(model, test_loader, criterion, device)
-    print("\n" + "=" * charCount + "\n")
+    print("\n" + "=" * char_count + "\n")
 
     # save model
     torch.save(model.state_dict(), "mnist-cnn.pth")
     print("DEBUG: \x1B[1mModel Saved!\x1B[0m")
-    print("\n" + "=" * charCount)
+    print("\n" + "=" * char_count)
 
 
 if __name__ == "__main__":
