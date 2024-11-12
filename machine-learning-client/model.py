@@ -19,7 +19,7 @@ class CNNModel(nn.Module):
         self.dropout = nn.Dropout(0.25)
 
     def forward(self, x):
-        """ Pass input through the model and return output """
+        """Pass input through the model and return output"""
         x = self.pool(F.relu(self.conv1(x)))
         x = self.pool(F.relu(self.conv2(x)))
         x = self.pool(F.relu(self.conv3(x)))
