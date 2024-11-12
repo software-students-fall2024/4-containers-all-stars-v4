@@ -1,6 +1,8 @@
 """ Module for saving classification outputs and user inputs to mongodb """
+
 import logging
 from db_connect import connect_to_db
+
 collection = connect_to_db()
 logger = logging.getLogger(__name__)
 
@@ -9,14 +11,13 @@ def save_to_mongo(data):
     """Function to save data to mongo db"""
     try:
         document = {
-            'intended_num': data['intendedNum'],
-            'classified_num': data['classifiedNum'],
-            'image_data': data['imageData'],
+            "intended_num": data["intendedNum"],
+            "classified_num": data["classifiedNum"],
+            "image_data": data["imageData"],
         }
 
         result = collection.insert_one(document)
-        logger.info("Document saved to MongoDB with id: %s",
-                    result.inserted_id)
+        logger.info("Document saved to MongoDB with id: %s", result.inserted_id)
         return True
 
     except KeyError as e:
