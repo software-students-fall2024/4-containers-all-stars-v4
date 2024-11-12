@@ -1,26 +1,14 @@
 """ Module for retrieving application statistics from mongodb """
 
 import logging
-import os
-import pymongo
-import certifi
-from dotenv import load_dotenv
+from db_connect import connect_to_db
 
-logging.basicConfig(level=logging.INFO)
+collection = connect_to_db()
 logger = logging.getLogger(__name__)
-
-load_dotenv()
-mongo_cxn = os.getenv('MONGO_CXN_STRING')
-# client = pymongo.MongoClient(mongo_cxn, tlsCAFile=certifi.where())
-client = pymongo.MongoClient(mongo_cxn)
-
-
-db = client['project4']
-collection = db['num_classifications']
 
 
 def get_statistics():
-    """ Function to retrieve application statistics from mongodb """
+    """Function to retrieve application statistics from mongodb"""
     try:
         # get total count of documents
         total_count = collection.count_documents({})
@@ -42,10 +30,9 @@ def get_statistics():
             if total_digit > 0:
 
                 # count correct classifications for this digit
-                correct_digit = collection.count_documents({
-                    "intended_num": digit,
-                    "classified_num": digit
-                })
+                correct_digit = collection.count_documents(
+                    {"intended_num": digit, "classified_num": digit}
+                )
 
                 # calculate accuracy for this digit
                 digit_accuracy = (correct_digit / total_digit) * 100
@@ -54,20 +41,20 @@ def get_statistics():
                 individual_digit_stats[digit] = {
                     "total_attempts": total_digit,
                     "correct_classifications": correct_digit,
-                    "accuracy": round(digit_accuracy, 2)
+                    "accuracy": round(digit_accuracy, 2),
                 }
             else:
                 individual_digit_stats[digit] = {
                     "total_attempts": 0,
                     "correct_classifications": 0,
-                    "accuracy": 0
+                    "accuracy": 0,
                 }
 
         return {
             "total_samples": total_count,
             "correct_predictions": correct_predictions,
             "overall_accuracy": round(overall_accuracy, 2),
-            "individual_digits": individual_digit_stats
+            "individual_digits": individual_digit_stats,
         }
 
     except ZeroDivisionError as e:
