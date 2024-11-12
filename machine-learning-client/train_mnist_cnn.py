@@ -3,7 +3,7 @@
 import torch
 from torch import optim
 from torchvision import datasets, transforms
-from model import *
+from model import CNNModel, InvertGrayscale
 
 
 def train(model, train_loader, optimizer, criterion, device):
