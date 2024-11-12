@@ -37,19 +37,19 @@ class InvertGrayscale:
     def __call__(self, tensor):
         return 255.0 - tensor
 
-def main():
-    transform = transforms.Compose([
-        transforms.ToTensor(),
-        InvertGrayscale()
-    ])
 
-    dataset = datasets.MNIST(root='./data', train=True,
-                            download=True, transform=transform)
+def main():
+    transform = transforms.Compose([transforms.ToTensor(), InvertGrayscale()])
+
+    dataset = datasets.MNIST(
+        root="./data", train=True, download=True, transform=transform
+    )
     loader = torch.utils.data.DataLoader(
-        dataset, batch_size=64, shuffle=False, num_workers=0)
+        dataset, batch_size=64, shuffle=False, num_workers=0
+    )
 
     MEAN = 0.0
-    STD= 0.0
+    STD = 0.0
     total_images = 0
 
     for images, _ in loader:
@@ -57,11 +57,11 @@ def main():
         # flatten the spatial dimensions
         images = images.view(batch_samples, images.size(1), -1)
         MEAN += images.mean(2).sum(0)
-        STD+= images.std(2).sum(0)
+        STD += images.std(2).sum(0)
         total_images += batch_samples
 
     MEAN /= total_images
-    STD/= total_images
+    STD /= total_images
 
     CHAR_COUNT = 100
 
@@ -71,33 +71,40 @@ def main():
     print(f" * Std: {float(STD):.4f}")
     print("\n" + "=" * CHAR_COUNT + "\n")
 
-    train_transform = transforms.Compose([
-        transforms.RandomRotation(degrees=10),    # randomly rotate images
-        transforms.RandomAffine(degrees=0, translate=(
-            0.1, 0.1)),  # randomly translate images
-        transforms.RandomResizedCrop(28, scale=(
-            0.9, 1.1)),  # randomly scale images
-        transforms.ToTensor(),
-        InvertGrayscale(),
-        transforms.Normalize((MEAN,), (STD,))
-    ])
+    train_transform = transforms.Compose(
+        [
+            transforms.RandomRotation(degrees=10),  # randomly rotate images
+            transforms.RandomAffine(
+                degrees=0, translate=(0.1, 0.1)
+            ),  # randomly translate images
+            transforms.RandomResizedCrop(28, scale=(0.9, 1.1)),  # randomly scale images
+            transforms.ToTensor(),
+            InvertGrayscale(),
+            transforms.Normalize((MEAN,), (STD,)),
+        ]
+    )
 
-    test_transform = transforms.Compose([
-        transforms.ToTensor(),
-        InvertGrayscale(),
-        transforms.Normalize((MEAN,), (STD,))
-    ])
+    test_transform = transforms.Compose(
+        [
+            transforms.ToTensor(),
+            InvertGrayscale(),
+            transforms.Normalize((MEAN,), (STD,)),
+        ]
+    )
 
     train_dataset = datasets.MNIST(
-        root='./data', train=True, download=True, transform=train_transform)
+        root="./data", train=True, download=True, transform=train_transform
+    )
     test_dataset = datasets.MNIST(
-        root='./data', train=False, download=True, transform=test_transform)
+        root="./data", train=False, download=True, transform=test_transform
+    )
 
     train_loader = torch.utils.data.DataLoader(
-        train_dataset, batch_size=64, shuffle=True)
+        train_dataset, batch_size=64, shuffle=True
+    )
     test_loader = torch.utils.data.DataLoader(
-        test_dataset, batch_size=1000, shuffle=False)
-
+        test_dataset, batch_size=1000, shuffle=False
+    )
 
     def train(model, train_loader, optimizer, criterion, device):
         model.train()
@@ -121,9 +128,8 @@ def main():
             running_loss += loss.item()
 
         avg_loss = running_loss / len(train_loader)
-        print(f'Train Loss: {avg_loss:.4f}')
+        print(f"Train Loss: {avg_loss:.4f}")
         return avg_loss
-
 
     def test(model, test_loader, criterion, device):
         model.eval()
@@ -144,10 +150,9 @@ def main():
                 correct += pred.eq(target.view_as(pred)).sum().item()
 
         test_loss /= len(test_loader)
-        accuracy = 100. * correct / len(test_loader.dataset)
-        print(f'Test Loss: {test_loss:.4f}, Accuracy: {accuracy:.2f}%')
+        accuracy = 100.0 * correct / len(test_loader.dataset)
+        print(f"Test Loss: {test_loss:.4f}, Accuracy: {accuracy:.2f}%")
         return test_loss, accuracy
-
 
     # device specifications
     device = torch.device("mps" if torch.mps.is_available() else "cpu")
@@ -164,15 +169,16 @@ def main():
     print("DEBUG: \x1B[4mModel Training and Evaluation\x1B[0m" + "\n")
     # train test loop
     for epoch in range(1, epochs + 1):
-        print(f'Epoch {epoch}/{epochs}')
+        print(f"Epoch {epoch}/{epochs}")
         train_loss = train(model, train_loader, optimizer, criterion, device)
         test_loss, accuracy = test(model, test_loader, criterion, device)
     print("\n" + "=" * CHAR_COUNT + "\n")
 
     # save model
-    torch.save(model.state_dict(), 'mnist-cnn.pth')
+    torch.save(model.state_dict(), "mnist-cnn.pth")
     print("DEBUG: \x1B[1mModel Saved!\x1B[0m")
     print("\n" + "=" * CHAR_COUNT)
+
 
 if __name__ == "__main__":
     main()
