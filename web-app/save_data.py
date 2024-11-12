@@ -1,8 +1,8 @@
 """ Module for saving classification outputs and user inputs to mongodb """
+import logging
 from db_connect import connect_to_db
 db = connect_to_db()
 collection = db['num_classifications']
-import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
