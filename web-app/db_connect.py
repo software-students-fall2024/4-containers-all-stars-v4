@@ -13,8 +13,11 @@ def connect_to_db():
     """Configures logger and connects to db"""
     load_dotenv()
     mongo_cxn = os.getenv("MONGO_CXN_STRING")
-    # client = pymongo.MongoClient(mongo_cxn, tlsCAFile=certifi.where())
-    client = pymongo.MongoClient(mongo_cxn)
+    
+    try:
+        client = pymongo.MongoClient(mongo_cxn, tlsCAFile=certifi.where())
+    except:
+        client = pymongo.MongoClient(mongo_cxn)
 
     db = client["project4"]
     return db["num_classifications"]
