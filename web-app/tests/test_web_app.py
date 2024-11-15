@@ -1,6 +1,5 @@
 """Used to test web app component."""
 import pytest
-from flask_login import FlaskLoginClient
 from unittest.mock import patch, Mock
 from app import create_app
 
@@ -9,7 +8,6 @@ from app import create_app
 def app():
     """Fixture for creating and configuring the Flask app."""
     app = create_app()
-    app.test_client_class = FlaskLoginClient
     return app
 
 class Tests:
