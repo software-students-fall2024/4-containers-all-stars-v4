@@ -34,7 +34,7 @@ def train(model, train_loader, optimizer, criterion, device):
     return avg_loss
 
 
-def test(model, test_loader, criterion, device):
+def evaluate_model(model, test_loader, criterion, device):
     """Method for testing model"""
     model.eval()
     test_loss = 0
