@@ -1,6 +1,6 @@
 """ Module for connecting to mongodb """
 
-# import certifi
+import certifi
 import os
 import logging
 import pymongo
@@ -14,10 +14,9 @@ def connect_to_db():
     load_dotenv()
     mongo_cxn = os.getenv("MONGO_CXN_STRING")
     
-    try:
-        client = pymongo.MongoClient(mongo_cxn, tlsCAFile=certifi.where())
-    except:
-        client = pymongo.MongoClient(mongo_cxn)
+    #client = pymongo.MongoClient(mongo_cxn, tlsCAFile=certifi.where())
+    
+    client = pymongo.MongoClient(mongo_cxn)
 
     db = client["project4"]
     return db["num_classifications"]
