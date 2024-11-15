@@ -1,10 +1,11 @@
 """ Module for training MNIST CNN model"""
 
 import torch
-from torch import nn
-from torch import optim
+from torch import nn, optim
 from torchvision import datasets, transforms
 from model import CNNModel, InvertGrayscale
+
+CHAR_COUNT = 100
 
 
 def train(model, train_loader, optimizer, criterion, device):
@@ -59,18 +60,11 @@ def evaluate_model(model, test_loader, criterion, device):
     return test_loss, accuracy
 
 
-def main():
-    """Main method to train and save model"""
-    model = CNNModel()
-
+def compute_dataset_statistics(dataset, batch_size=64):
+    """Compute mean and standard deviation for the dataset."""
     loader = torch.utils.data.DataLoader(
-        dataset=datasets.MNIST(
-            root="./data",
-            train=True,
-            download=True,
-            transform=transforms.Compose([transforms.ToTensor(), InvertGrayscale()]),
-        ),
-        batch_size=64,
+        dataset=dataset,
+        batch_size=batch_size,
         shuffle=False,
         num_workers=0,
     )
@@ -89,15 +83,11 @@ def main():
 
     mean /= total_images
     std /= total_images
+    return float(mean), float(std)
 
-    char_count = 100
 
-    print("\n" + "=" * char_count + "\n")
-    print("DEBUG: Dataset Characteristics")
-    print(f" * mean: {float(mean):.4f}")
-    print(f" * std: {float(std):.4f}")
-    print("\n" + "=" * char_count + "\n")
-
+def get_transforms(mean, std):
+    """Define train and test data transformations."""
     train_transform = transforms.Compose(
         [
             transforms.RandomRotation(degrees=10),  # randomly rotate images
@@ -118,52 +108,90 @@ def main():
             transforms.Normalize((mean,), (std,)),
         ]
     )
+    return train_transform, test_transform
+
+
+def get_data_loaders(batch_size=64, dataset_path="./data"):
+    """Return data loaders for train and test datasets."""
+    dataset = datasets.MNIST(
+        root=dataset_path,
+        train=True,
+        download=True,
+        transform=transforms.Compose([transforms.ToTensor(), InvertGrayscale()]),
+    )
+    mean, std = compute_dataset_statistics(dataset, batch_size=batch_size)
+    train_transform, test_transform = get_transforms(mean, std)
+
+    train_dataset = datasets.MNIST(
+        root=dataset_path, train=True, download=True, transform=train_transform
+    )
+    test_dataset = datasets.MNIST(
+        root=dataset_path, train=False, download=True, transform=test_transform
+    )
 
     train_loader = torch.utils.data.DataLoader(
-        datasets.MNIST(
-            root="./data", train=True, download=True, transform=train_transform
-        ),
-        batch_size=64,
+        train_dataset,
+        batch_size=batch_size,
         shuffle=True,
     )
     test_loader = torch.utils.data.DataLoader(
-        datasets.MNIST(
-            root="./data", train=False, download=True, transform=test_transform
-        ),
-        batch_size=1000,
+        test_dataset,
+        batch_size=batch_size * 16,
         shuffle=False,
     )
+    return train_loader, test_loader
 
-    # device specifications
+
+def save_model(model, save_path):
+    """Save the trained model to the specified path"""
+    torch.save(model.state_dict(), save_path)
+
+
+def main(
+    epochs=10,
+    learning_rate=0.001,
+    batch_size=64,
+    dataset_path="./data",
+    model_save_path="mnist-cnn.pth",
+):
+    """Main method to train and save the MNIST CNN model"""
+    # Initialize the model
+    model = CNNModel()
+
+    # Get data loaders
+    train_loader, test_loader = get_data_loaders(
+        batch_size=batch_size, dataset_path=dataset_path
+    )
+
+    # Device setup
     device = torch.device("mps" if torch.mps.is_available() else "cpu")
+    print(f"DEBUG: Using device: {device}")
 
-    # hyperparameters
-    # epochs = 10
-    # learning_rate = 0.001
-
-    # init model, criterion, and optimizer
+    # Initialize training components
     model.to(device)
     criterion = nn.CrossEntropyLoss()
-    # optimizer = optim.Adam(model.parameters(), lr=learning_rate)
+    optimizer = optim.Adam(model.parameters(), lr=learning_rate)
 
-    print("DEBUG: \x1B[4mModel Training and Evaluation\x1B[0m" + "\n")
-    # train test loop
-    for epoch in range(1, 10 + 1):
-        print(f"Epoch {epoch}/{10}")
+    # Training and evaluation
+    print("DEBUG: \x1B[4mModel Training and Evaluation\x1B[0m\n")
+    for epoch in range(1, epochs + 1):
+        print(f"Epoch {epoch}/{epochs}")
         train(
             model,
             train_loader,
-            optim.Adam(model.parameters(), lr=0.001),
+            optimizer,
             criterion,
             device,
         )
-        test(model, test_loader, criterion, device)
-    print("\n" + "=" * char_count + "\n")
+        evaluate_model(model, test_loader, criterion, device)
+    print("\n" + "=" * CHAR_COUNT + "\n")
 
-    # save model
-    torch.save(model.state_dict(), "mnist-cnn.pth")
-    print("DEBUG: \x1B[1mModel Saved!\x1B[0m")
-    print("\n" + "=" * char_count)
+    # Save the model
+    if model_save_path:
+        save_model(model, model_save_path)
+        print("\n" + "=" * CHAR_COUNT)
+        print(f"DEBUG: \x1B[1mModel Saved to {model_save_path}!\x1B[0m")
+        print("=" * CHAR_COUNT)
 
 
 if __name__ == "__main__":
