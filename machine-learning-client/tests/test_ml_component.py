@@ -6,6 +6,7 @@ from PIL import Image
 from torch import nn, optim
 from torch.utils.data import DataLoader, TensorDataset
 from torchvision import datasets, transforms
+from model import CNNModel, InvertGrayscale
 from train_mnist_cnn import (
     train,
     evaluate_model,
@@ -13,8 +14,6 @@ from train_mnist_cnn import (
     get_transforms,
     compute_dataset_statistics,
 )
-from model import CNNModel, InvertGrayscale
-
 
 class Tests:
     """Test functions"""
