@@ -1,12 +1,8 @@
 ![Lint-free](https://github.com/software-students-fall2024/4-containers-all-stars-v4/actions/workflows/lint.yml/badge.svg)
 ![ML-Client CI Workflow](https://github.com/software-students-fall2024/4-containers-all-stars-v4/actions/workflows/ml-client.yml/badge.svg)
+![Web-App CI Workflow](https://github.com/software-students-fall2024/4-containers-all-stars-v4/actions/workflows/web-app.yml/badge.svg)
 
-
-# Containerized App Exercise
-
-Build a containerized app that uses machine learning. See [instructions](./instructions.md) for details.
-
-# Containerized Number Classification App
+# Containerized Digit Classification App
 
 ## Description
 
