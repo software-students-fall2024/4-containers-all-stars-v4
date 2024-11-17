@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - 'machine-learning-client/**'
+      - '.github/workflows/ml-client.yml'
 
 jobs:
   test-and-build:
