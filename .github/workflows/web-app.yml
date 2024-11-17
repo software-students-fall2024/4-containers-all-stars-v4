@@ -1,0 +1,59 @@
+name: Web App CI/CD
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'web-app/**'
+      - '.github/workflows/web-app.yml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'web-app/**'
+      - '.github/workflows/web-app.yml'
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./web-app
+
+    services:
+      mongodb:
+        image: mongo:6.0
+        ports:
+          - 27017:27017
+        env:
+          MONGO_INITDB_ROOT_USERNAME: test
+          MONGO_INITDB_ROOT_PASSWORD: test
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.13
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Install dependencies
+        run: |
+          pip install pipenv
+          pipenv install --dev
+
+      - name: Run tests
+        env:
+          MONGO_CXN_STRING: mongodb://test:test@localhost:27017/
+          ML_CLIENT_PORT: http://localhost:5002
+        run: |
+          pipenv run coverage run -m pytest
+          pipenv run coverage report
+
+      - name: Build Docker image
+        run: |
+          docker build -t web-app \
+            --build-arg MONGO_CXN_STRING=mongodb://test:test@localhost:27017/ \
+            --build-arg ML_CLIENT_PORT=http://localhost:5002 \
+            .
