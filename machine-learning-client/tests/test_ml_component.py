@@ -15,6 +15,7 @@ from train_mnist_cnn import (
     compute_dataset_statistics,
 )
 
+
 class Tests:
     """Test functions"""
 

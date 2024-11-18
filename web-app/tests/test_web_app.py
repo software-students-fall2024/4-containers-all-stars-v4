@@ -1,4 +1,5 @@
 """Used to test web app component."""
+
 from unittest.mock import patch, Mock
 import pytest
 from app import create_app
@@ -11,13 +12,16 @@ def test_app():
     """Fixture for creating and configuring the Flask app."""
     return create_app()
 
+
+# pylint: disable=redefined-outer-name
 class Tests:
     """Test functions"""
+
     def test_sanity_check(self):
         """
         Test debugging... making sure that we can run a simple test that always passes.
-        Note the use of the example_fixture in the parameter list - 
-        any setup and teardown in that fixture will be run before 
+        Note the use of the example_fixture in the parameter list -
+        any setup and teardown in that fixture will be run before
         and after this test function executes.
         """
         expected = True
@@ -29,12 +33,10 @@ class Tests:
         with test_app.test_client() as client:
             assert client.get("/").status_code == 200
 
-
     def test_statistics_page(self, test_app):
         """Test the statistics page route."""
         with test_app.test_client() as client:
             assert client.get("/statistics").status_code == 200
-
 
     @patch("app.requests.post", autospec=True)
     def test_classify_endpoint(self, mock_post, test_app):
@@ -46,14 +48,16 @@ class Tests:
         mock_post.return_value = mock_response
 
         with test_app.test_client() as client:
-            response = client.post("/classify", json={
-                "intendedNum": 1,
-                "classifiedNum": 4,
-                "imageData": "base64encodedstring"
-            })
+            response = client.post(
+                "/classify",
+                json={
+                    "intendedNum": 1,
+                    "classifiedNum": 4,
+                    "imageData": "base64encodedstring",
+                },
+            )
             assert response.status_code == 200
             assert response.json == {"prediction": "mocked response"}
-
 
     @patch("app.save_to_mongo", autospec=True)
     def test_save_results_endpoint(self, mock_save_to_mongo, test_app):
@@ -61,18 +65,22 @@ class Tests:
         mock_save_to_mongo.return_value = None
 
         with test_app.test_client() as client:
-            response = client.post("/save-results", json={
-                "intendedNum": 1,
-                "classifiedNum": 4,
-                "imageData": "base64encodedstring"
-            })
+            response = client.post(
+                "/save-results",
+                json={
+                    "intendedNum": 1,
+                    "classifiedNum": 4,
+                    "imageData": "base64encodedstring",
+                },
+            )
             assert response.status_code == 204
-            mock_save_to_mongo.assert_called_once_with({
-                "intendedNum": 1,
-                "classifiedNum": 4,
-                "imageData": "base64encodedstring"
-            })
-
+            mock_save_to_mongo.assert_called_once_with(
+                {
+                    "intendedNum": 1,
+                    "classifiedNum": 4,
+                    "imageData": "base64encodedstring",
+                }
+            )
 
     @patch("app.get_statistics", autospec=True)
     def test_get_stats_endpoint(self, mock_get_statistics, test_app):
@@ -81,7 +89,6 @@ class Tests:
 
         with test_app.test_client() as client:
             assert client.get("/get-stats").status_code == 200
-
 
     @patch("get_statistics.collection")
     def test_get_statistics_zero_documents(self, mock_collection):
@@ -94,6 +101,7 @@ class Tests:
     @patch("get_statistics.collection")
     def test_get_statistics_with_data(self, mock_collection):
         """Test get_statistics with sample data."""
+
         def mock_count_documents(query=None):
             if not query:
                 return 10
@@ -104,10 +112,10 @@ class Tests:
             if query == {"intended_num": 0, "classified_num": 0}:
                 return 4
             return 0
-        
+
         mock_collection.count_documents.side_effect = mock_count_documents
         result = get_statistics()
-        
+
         assert result["total_samples"] == 10
         assert result["correct_predictions"] == 8
         assert result["overall_accuracy"] == 80.0
@@ -127,7 +135,7 @@ class Tests:
         data = {
             "intendedNum": "not_a_number",
             "classifiedNum": 4,
-            "imageData": "base64"
+            "imageData": "base64",
         }
         result = save_to_mongo(data)
         assert result is False
