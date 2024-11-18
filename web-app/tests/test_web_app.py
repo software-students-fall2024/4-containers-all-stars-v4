@@ -5,7 +5,7 @@ from app import create_app
 
 
 @pytest.fixture
-def app():
+def test_app():
     """Fixture for creating and configuring the Flask app."""
     return create_app()
 
@@ -22,15 +22,15 @@ class Tests:
         actual = True
         assert actual == expected, "Expected True to be equal to True!"
 
-    def test_home_page(self, app):
+    def test_home_page(self, test_app):
         """Test the home page route."""
-        with app.test_client() as client:
+        with test_app.test_client() as client:
             assert client.get("/").status_code == 200
 
 
-    def test_statistics_page(self, app):
+    def test_statistics_page(self, test_app):
         """Test the statistics page route."""
-        with app.test_client() as client:
+        with test_app.test_client() as client:
             assert client.get("/statistics").status_code == 200
 
 
