@@ -21,7 +21,6 @@ main_bp = Blueprint('main', __name__)
 def create_app():
     test_app = Flask(__name__)
     test_app.register_blueprint(main_bp)
-
     return test_app
 
 # Define routes under the blueprint
@@ -72,7 +71,6 @@ def save_results():
 @main_bp.route("/get-stats", methods=["GET"])
 def get_stats():
     """Call to function that retrieves app statistics"""
-
     return get_statistics()
 
 
