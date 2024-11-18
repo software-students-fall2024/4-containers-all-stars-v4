@@ -6,7 +6,7 @@
 
 ## Description
 
-This project is an interactive digit recognition application. Users can draw numbers on the UI, which are instantly classified by a Convolutional Neural Network (CNN) trained on the [MNIST](https://en.wikipedia.org/wiki/MNIST_database) dataset. The application also has a statistics dashboard where users can view the model's performance. The system also stores all user inputs in MNIST-compatible format, creating a valuable dataset for future potential model training.
+This project is an interactive digit recognition application. Users can draw numbers on the UI, which are instantly classified by a Convolutional Neural Network (CNN) pre-trained on the [MNIST](https://en.wikipedia.org/wiki/MNIST_database) dataset. The application also has a statistics dashboard where users can view the model's performance. User inputs are stored in MNIST-compatible format, creating a valuable dataset for future potential model training.
 
 ## Team Members
 
