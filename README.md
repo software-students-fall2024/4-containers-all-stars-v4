@@ -37,5 +37,4 @@ This project is an interactive digit recognition application. Users can draw num
 
 ## .Env files instructions
 
-Create a `.env` file in the main directory (same level as this README file)
-
+Create a `.env` file in the main directory (same level as this README file
