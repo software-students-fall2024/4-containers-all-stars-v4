@@ -35,7 +35,7 @@ class Tests:
 
 
     @patch("app.requests.post", autospec=True)
-    def test_classify_endpoint(self, mock_post, app):
+    def test_classify_endpoint(self, mock_post, test_app):
         """Test the classify route."""
 
         mock_response = Mock()
@@ -43,7 +43,7 @@ class Tests:
         mock_response.json.return_value = {"prediction": "mocked response"}
         mock_post.return_value = mock_response
 
-        with app.test_client() as client:
+        with test_app.test_client() as client:
             response = client.post("/classify", json={
                 "intendedNum": 1,
                 "classifiedNum": 4,
@@ -54,11 +54,11 @@ class Tests:
 
 
     @patch("app.save_to_mongo", autospec=True)
-    def test_save_results_endpoint(self, mock_save_to_mongo, app):
+    def test_save_results_endpoint(self, mock_save_to_mongo, test_app):
         """Test the save-results route."""
         mock_save_to_mongo.return_value = None
 
-        with app.test_client() as client:
+        with test_app.test_client() as client:
             response = client.post("/save-results", json={
                 "intendedNum": 1,
                 "classifiedNum": 4,
@@ -73,9 +73,9 @@ class Tests:
 
 
     @patch("app.get_statistics", autospec=True)
-    def test_get_stats_endpoint(self, mock_get_statistics, app):
+    def test_get_stats_endpoint(self, mock_get_statistics, test_app):
         """Test the get-stats route."""
         mock_get_statistics.return_value = {}
 
-        with app.test_client() as client:
+        with test_app.test_client() as client:
             assert client.get("/get-stats").status_code == 200
