@@ -19,21 +19,22 @@ This project is an interactive digit recognition application. Users can draw num
 
 # There are two ways to configure and run all parts of the project
 
-- Using Docker
+- Using Docker (easiest)
 
-1. If you haven't already, install the `Docker Desktop`.
-2. Make sure Docker Desktop is open.
-3. Go to the main directory of the project and run `docker-compose up --build` in the terminal.
+    1. If you haven't already, install the `Docker Desktop`.
+    2. Make sure Docker daemon is running.
+    3. Go to the main directory of the project and run `docker compose up --build` in the terminal.
+    4. Enter the local address where the `web-app` container is running. This should be configured to port 5001.
 
 - Using Virtual Environments
 
-1. If you haven't already, install `pipenv` using the command: `pip install pipenv`.
-2. Create two terminals, one that's in the web-app subdirectory and another that's in the machine-learning-client subdirectory. Do the next insturctions for both terminals.
-3. Create virtual environments by running `pipenv install`
-4. Activate the virtual environment: `pipenv shell`.
-5. Install additional dependencies: `pip install -r requirements.txt`
-6. Run the app: `python app.py`
+    1. If you haven't already, install `pipenv` using the command: `pip install pipenv`.
+    2. Create two terminals. Navigate to `web-app` in one and `machine-learning-client` in the other.
+    3. Create virtual environments by running `pipenv install` in both subdirectories.
+    4. Activate the virtual environments in both terminals using `pipenv shell`.
+    5. Run the flask apps for both `web-app` and `machine-learning-client`. The command is the same in both subdirectories.: `python app.py`
+    6. If needed, install additional dependencies: `pip install -r requirements.txt`.
 
 ## .Env files instructions
 
-1. Go to the main directory of the project and create a `.env` file: macOs/Linux - `touch .env`, Windows - `New-Item -Path . -Name ".env" -ItemType "File"`
+Create a `.env` file in the main directory (same level as this README file
