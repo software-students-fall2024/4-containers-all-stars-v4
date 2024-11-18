@@ -2,6 +2,8 @@
 from unittest.mock import patch, Mock
 import pytest
 from app import create_app
+from get_statistics import get_statistics
+from save_data import save_to_mongo
 
 
 @pytest.fixture
@@ -79,3 +81,53 @@ class Tests:
 
         with test_app.test_client() as client:
             assert client.get("/get-stats").status_code == 200
+
+
+    @patch("get_statistics.collection")
+    def test_get_statistics_zero_documents(self, mock_collection):
+        """Test get_statistics with no documents."""
+        mock_collection.count_documents.return_value = 0
+        result = get_statistics()
+        assert "error" in result
+        assert "No data available" in result["error"]
+
+    @patch("get_statistics.collection")
+    def test_get_statistics_with_data(self, mock_collection):
+        """Test get_statistics with sample data."""
+        def mock_count_documents(query=None):
+            if not query:
+                return 10
+            if "$expr" in query:
+                return 8
+            if query == {"intended_num": 0}:
+                return 5
+            if query == {"intended_num": 0, "classified_num": 0}:
+                return 4
+            return 0
+        
+        mock_collection.count_documents.side_effect = mock_count_documents
+        result = get_statistics()
+        
+        assert result["total_samples"] == 10
+        assert result["correct_predictions"] == 8
+        assert result["overall_accuracy"] == 80.0
+        assert result["individual_digits"][0]["accuracy"] == 80.0
+
+    @patch("save_data.collection")
+    def test_save_to_mongo_invalid_data(self, mock_collection):
+        """Test save_to_mongo with invalid data."""
+        result = save_to_mongo({"invalid": "data"})
+        assert result is False
+        mock_collection.insert_one.assert_not_called()
+
+    @patch("save_data.collection")
+    def test_save_to_mongo_type_error(self, mock_collection):
+        """Test save_to_mongo with data causing TypeError."""
+        mock_collection.insert_one.side_effect = TypeError("Invalid type")
+        data = {
+            "intendedNum": "not_a_number",
+            "classifiedNum": 4,
+            "imageData": "base64"
+        }
+        result = save_to_mongo(data)
+        assert result is False
