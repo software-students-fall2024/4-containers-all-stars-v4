@@ -15,16 +15,11 @@ logger = logging.getLogger(__name__)
 load_dotenv()
 ml_base_url = os.getenv("ML_CLIENT_PORT")
 
-
-main_bp = Blueprint("main", __name__)
-
-
 def create_app():
     """Creates test app for pytest"""
     test_app = Flask(__name__)
     test_app.register_blueprint(main_bp)
     return test_app
-
 
 # Define routes under the blueprint
 @main_bp.route("/")
