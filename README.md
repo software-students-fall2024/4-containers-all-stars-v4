@@ -37,10 +37,3 @@ This project is an interactive digit recognition application. Users can draw num
 ## .Env files instructions
 
 1. Go to the main directory of the project and create a `.env` file: macOs/Linux - `touch .env`, Windows - `New-Item -Path . -Name ".env" -ItemType "File"`
-2. Copy and paste the contents below:
-
-MONGO_CXN_STRING=mongodb+srv://inp9194:3lVvTkvkz3lDh1z1@allstars.ea528.mongodb.net/?retryWrites=true&w=majority&appName=allstars
-ML_CLIENT_PORT=http://localhost:5002
-MONGO_USERNAME=inp9194
-MONGO_PASSWORD=3lVvTkvkz3lDh1z1
-
