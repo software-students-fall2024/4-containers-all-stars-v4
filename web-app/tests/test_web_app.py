@@ -1,14 +1,13 @@
 """Used to test web app component."""
-import pytest
 from unittest.mock import patch, Mock
+import pytest
 from app import create_app
 
 
 @pytest.fixture
 def app():
     """Fixture for creating and configuring the Flask app."""
-    app = create_app()
-    return app
+    return create_app()
 
 class Tests:
     """Test functions"""
