@@ -1,4 +1,5 @@
-# Flask server for web application - Project 4
+""" Flask server for web application - Project 4 """
+
 import os
 import logging
 import requests
@@ -15,14 +16,15 @@ load_dotenv()
 ml_base_url = os.getenv("ML_CLIENT_PORT")
 
 
-main_bp = Blueprint('main', __name__)
+main_bp = Blueprint("main", __name__)
 
 
 def create_app():
+    """Creates test app for pytest"""
     test_app = Flask(__name__)
     test_app.register_blueprint(main_bp)
-
     return test_app
+
 
 # Define routes under the blueprint
 @main_bp.route("/")
@@ -51,7 +53,7 @@ def classify():
         logger.error("Request timed out")
         return {"error": "Request timed out"}, 500
     except requests.exceptions.RequestException as e:
-        logger.error(f"An error occurred: {e}")
+        logger.error("An error occurred: %s", e)
         return {"error": f"An error occurred: {e}"}, 500
 
     if response.status_code == 200:
