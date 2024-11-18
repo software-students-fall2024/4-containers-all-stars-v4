@@ -17,7 +17,7 @@ This project is an interactive digit recognition application. Users can draw num
 
 ## Configuration Instructions
 
-# There are two ways to configure and run all parts of the project
+### There are two ways to configure and run all parts of the project
 
 - Using Docker (easiest)
 
