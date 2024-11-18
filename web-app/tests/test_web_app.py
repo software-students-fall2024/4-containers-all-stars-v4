@@ -12,6 +12,7 @@ def test_app():
     """Fixture for creating and configuring the Flask app."""
     return create_app()
 
+
 # pylint: disable=redefined-outer-name
 class Tests:
     """Test functions"""
